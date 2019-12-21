@@ -68,6 +68,7 @@ dependencies[] = scratchpads_biblio
 dependencies[] = scratchpads_biblio_autocomplete_tweak
 dependencies[] = scratchpads_biblio_search
 dependencies[] = scratchpads_blocks
+dependencies[] = scratchpads_classification_service_client
 dependencies[] = scratchpads_cleanup
 dependencies[] = scratchpads_col
 dependencies[] = scratchpads_colour
@@ -97,9 +98,11 @@ dependencies[] = scratchpads_show_taxa_revisions
 dependencies[] = scratchpads_simple_taxonomy_page
 dependencies[] = scratchpads_solr
 dependencies[] = scratchpads_species
+dependencies[] = scratchpads_statistics
 dependencies[] = scratchpads_taxonomic_name_field
 dependencies[] = scratchpads_user
 dependencies[] = scratchpads_width_and_height
+
 
 ; Custom modules
 dependencies[] = biblio_refbank

@@ -22,6 +22,16 @@ visitors such as blogs, forums, newsletters and a commenting system.
 
 For more information about what scratchpads are, see [http://scratchpads.eu](http://scratchpads.eu)
 
+## Install dependencies
+
+You can use [drush](https://docs.drush.org/en/8.x/) and [composer](https://getcomposer.org/) to install dependencies.
+
+There are two types of dependencies to install:
+ - Drupal dependencies: `drush make --no-core scratchpads2.make.yml .`
+ - Composer dependencies: `composer install`
+
+You can also install contrib modules using `drush dl {module_name}`.
+
 ## Development & Docker
 
 There are a collection of docker images, mostly intended for development. If
@@ -31,11 +41,11 @@ some very specific requirements.
 
 To get a development scratchpad up and running:
 
-- [Install docker-sync](https://github.com/EugenMayer/docker-sync/wiki/1.-Installation)
+- [Install docker-sync](https://docker-sync.readthedocs.io/en/latest/getting-started/installation.html) (`gem install docker-sync`)
 - Copy .env.template to .env and set some environment values
 - Run `docker-sync start`
 - Run `docker-compose up`
-- Go to `localhost:8081/install.php` to start the installation process
+- Go to [`localhost:8081/install.php`](http://localhost:8081/install.php) to start the installation process (make sure you choose the "Scratchpad 2" profile)
 - This repo will be mounted inside the docker, so you will be able to see any changes in real time (-ish)
 
 If you want to help develop Scratchpads please don't hesitate to get in touch!
@@ -45,3 +55,7 @@ If you want to help develop Scratchpads please don't hesitate to get in touch!
 We offer extensive support to users of the Scratchpads, whether using an NHM
 maintained Scratchpad, or a local one. Support should be requested using the
 "Issues..." tab which is visible when logged in to a Scratchpad.
+
+## Docker
+
+cat ../wallace.sql | docker exec -i scratchpads.apache drush sql-cli

@@ -1,26 +1,34 @@
-FROM php:5.6-apache
-
-WORKDIR /var/www/html
+FROM php:7.2-apache-stretch
 
 RUN apt-get update
 RUN apt-get -y install wget \
-             libxml2-dev \
-             git \
-             nano \
-             libpng-dev \
-             libmagickwand-dev \
-             imagemagick \
-             libgmp-dev \
-             zlib1g-dev \
-             ssmtp \
-             libfreetype6-dev \
-             libjpeg62-turbo-dev \
-             libgd-dev cron \
-             msmtp \
-             --no-install-recommends
+    libxml2-dev \
+    git \
+    nano \
+    libpng-dev \
+    libmagickwand-dev \
+    imagemagick \
+    libgmp-dev \
+    zlib1g-dev \
+    ssmtp \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libgd-dev cron \
+    msmtp \
+    unzip \
+    --no-install-recommends
 
-RUN pecl install uploadprogress
-RUN docker-php-ext-enable uploadprogress
+WORKDIR /tmp/
+ADD https://github.com/Jan-E/uploadprogress/archive/master.zip /tmp/
+RUN unzip master.zip && cd /tmp/uploadprogress-master
+WORKDIR /tmp/uploadprogress-master
+RUN phpize
+RUN ./configure
+RUN make
+RUN make install
+
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
 
 RUN docker-php-ext-install opcache
 RUN docker-php-ext-install sockets
@@ -36,14 +44,18 @@ RUN docker-php-ext-configure gd \
 
 RUN docker-php-ext-install pdo_mysql gd mbstring gmp zip
 
-RUN apt-get install -y \
-        libmcrypt-dev \
-    && docker-php-ext-install mcrypt \
-    && apt-get remove -y \
-        libmcrypt-dev \
+RUN apt-get install -y libmcrypt-dev
+
+# Mcrypt is not provided with php since 7.2,
+# Have to install it from PECL
+RUN pecl install mcrypt-1.0.2
+RUN docker-php-ext-enable mcrypt
+
+RUN apt-get remove -y \
+    libmcrypt-dev \
     && apt-get install -y \
-        libmcrypt4 \
-&& apt-get autoremove -y
+    libmcrypt4 \
+    && apt-get autoremove -y
 
 RUN apt-get install -y mysql-client
 
@@ -59,10 +71,10 @@ RUN mv drush.phar /usr/local/bin/drush
 RUN drush core-status
 
 # Configure for drupal install
-COPY settings.php /var/www/html/sites/default/settings.php
+COPY files/settings.php /var/www/html/sites/default/settings.php
 
 # Enable error logging & msmtp
-COPY php.ini /usr/local/etc/php/
+COPY files/php.ini /usr/local/etc/php/
 
 RUN usermod -u 1000 www-data
 RUN groupmod -g 1000 www-data
@@ -71,3 +83,5 @@ RUN chown -R www-data:www-data /var/www/html
 # Clean up
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+WORKDIR /var/www/html

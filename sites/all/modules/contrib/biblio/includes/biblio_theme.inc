@@ -241,16 +241,16 @@ function theme_biblio_tabular($variables) {
     if ($row['type'] == 'contrib_widget' && ($authors = biblio_get_contributor_category($node->biblio_contributors, $row['fid']))) {
       $data = biblio_format_authors($authors);
     }
-    elseif (empty ($node->$row['name']) || $row['name'] == 'biblio_coins') {
+    elseif (empty ($node->{$row['name']}) || $row['name'] == 'biblio_coins') {
       continue;
     }
     else {
       switch ($row['name']) {
         case 'biblio_keywords' :
-         $data = _biblio_keyword_links($node->$row['name'], $base);
+         $data = _biblio_keyword_links($node->{$row['name']}, $base);
           break;
         case 'biblio_url' :
-          $data = l($node->$row['name'], $node->$row['name'], $attrib);
+          $data = l($node->{$row['name']}, $node->{$row['name']}, $attrib);
           break;
         case 'biblio_doi' :
            $data = $doi;
@@ -262,10 +262,10 @@ function theme_biblio_tabular($variables) {
               $formats = $node->biblio_formats;
               $format  = isset($formats[$row['name']]) ? $formats[$row['name']] : $format;
             }
-            $data = check_markup($node->$row['name'], $format);
+            $data = check_markup($node->{$row['name']}, $format);
           }
           else {
-            $data = check_plain($node->$row['name']);
+            $data = check_plain($node->{$row['name']});
           }
       }
     }
@@ -280,9 +280,11 @@ function theme_biblio_tabular($variables) {
     );
   }
   if (isset($node->body) && !empty($node->body) && user_access('view full text')) {
+    // Store this in a temp variable to avoid a pass-by-reference error.
+    $full_text = field_view_field('node', $node, 'body', array('label' => 'hidden'));
     $rows[] = array(
         array('data' => t('Full Text'),  'valign' => 'top'),
-        array('data' =>  drupal_render(field_view_field('node', $node, 'body', array('label' => 'hidden')))),
+        array('data' => drupal_render($full_text)),
     );
 
   }
@@ -408,9 +410,24 @@ function biblio_format_authors($authors) {
     static $auth_proc;
     if (!isset($auth_proc)) {
       module_load_include('inc', 'biblio_citeproc', 'CSL');
-      $csl = '<name form="long" name-as-sort-order="all" sort-separator=", " initialize-with="" delimiter=", " />';
+      // Default CSL
+      $csl = '<name form="short" name-as-sort-order="all" sort-separator=", " initialize-with="" delimiter=", " />';
+      // Try and load the CSL file, and extract the author name style
+      $csl_id = biblio_get_style();
+      if ($csl_file_contents = biblio_citeproc_load_csl($csl_id)) {
+        $xml = simplexml_load_string($csl_file_contents);
+        $xml->registerXPathNamespace('csl', 'http://purl.org/net/xbiblio/csl');
+        $result = $xml->xpath("//csl:macro[@name='author']/csl:names/csl:name");
+        if ($result) {
+          //BUGFIX: Ensure and is null
+          $result[0]->attributes()->and='';
+          $csl = $result[0]->asXML();
+        }
+
+      }
       $csl_doc = new DOMDocument();
       $csl_doc->loadXML($csl);
+
       $auth_proc = new csl_rendering_element($csl_doc);
     }
     $data = $auth_proc->render($authors);
@@ -563,6 +580,7 @@ function theme_biblio_format_authors($variables) {
 }
 
 function theme_biblio_author_link($variables) {
+  $base  = variable_get('biblio_base', 'biblio');
   $author = $variables['author'];
   $options = isset($variables['options']) ? $variables['options'] : array();
 

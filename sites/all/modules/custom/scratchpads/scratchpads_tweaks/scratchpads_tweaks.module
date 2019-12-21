@@ -8,7 +8,10 @@ define('SCRATCHPADS_VERSION', 'TAG');
  * Implements hook_init()
  */
 function scratchpads_tweaks_init(){
-  setlocale(LC_ALL, 'C.UTF-8');
+  // Try to set the locale to UTF8;
+  // C.UTF-8 is not available on Centos yet so include a fallback option
+  setlocale(LC_ALL, 'C.UTF-8', 'en_GB.UTF-8');
+
   if($_GET['q'] == 'admin/appearance/settings/scratchpads' || $_GET['q'] == 'admin/appearance/settings/scratchpads_em'){
     // Check to see if we're trying to view the
     // admin/appearance/settings/scratchpads
@@ -517,7 +520,8 @@ function scratchpads_tweaks_menu(){
 function scratchpads_tweaks_update_status_alter(&$projects){
   $version = 'Scratchpads (' . SCRATCHPADS_VERSION . ')';
   foreach($projects as $name => $project){
-    if(strpos(drupal_get_path('module', $name), 'sites/all/modules/custom') !== FALSE){
+    $project_path = dirname(drupal_get_filename('module', $name, NULL, FALSE));
+    if(strpos($project_path, 'sites/all/modules/custom') !== FALSE){
       $projects[$name]['info']['version'] = $version;
       $projects[$name]['existing_version'] = $version;
       $projects[$name]['latest_version'] = $version;
@@ -538,6 +542,10 @@ function scratchpads_tweaks_menu_alter(&$items){
   if(isset($items['node/%node/clone'])){
     $items['node/%node/clone']['title'] = t('Clone');
     $items['node/%node/clone']['type'] = MENU_LOCAL_TASK;
+  }
+
+  if(isset($items['admin/structure/auto-label'])){
+      unset($items['admin/structure/auto-label']);
   }
 }
 
@@ -601,7 +609,7 @@ function scratchpads_tweaks_mail_alter(&$message){
     if ($sp_admin) {
       $message['to'] = $sp_admin->mail;
     }
-    $message['from'] = 'Scratchpads Team <no-reply@scratchpads.eu>';
+    $message['from'] = '"Scratchpads Team" <no-reply@scratchpads.eu>';
     $message['headers']['From'] = $message['from'];
     $message['headers']['Sender'] = $message['from'];
     $message['headers']['Return-Path'] = $message['from'];
@@ -680,6 +688,11 @@ function scratchpads_tweaks_system_info_alter(&$info, $file, $type){
       $info['tool'] = TRUE;
       $info['name'] = 'Webforms';
       $info['description'] = 'Enables the creation of simple online forms. Useful for questionnaires, conference signup, polls, and much more.';
+      break;
+    case 'context_ui':
+      $info['tool'] = true;
+      $info['name'] = 'Context layouts';
+      $info['description'] = 'Advanced layout tools.';
       break;
     case 'views_ui':
       $info['tool'] = TRUE;
@@ -812,7 +825,7 @@ function scratchpads_tweaks_preprocess_status_report(&$variables) {
   // Only replace text if the requirement fails; we want to show the default once we've upgraded
   if (!empty($charset_requirements) && ($charset_requirements['severity'] != REQUIREMENT_OK)) {
     $charset_requirements['description'] = 'Scratchpads databases will be converted to utf8mb4 in the near future.';
-    $charset_requireents['severity'] == REQUIREMENT_INFO;
+    $charset_requirements['severity'] = REQUIREMENT_INFO;
 
     $requirements = &$variables['requirements'];
 
@@ -823,5 +836,16 @@ function scratchpads_tweaks_preprocess_status_report(&$variables) {
         break;
       }
     }
+  }
+}
+
+/**
+ * Implements hook_views_post_build()
+ */
+function scratchpads_tweaks_views_post_build(&$view) {
+  // if a view has an override title set, use that instead of the build title (e.g. 'Recent %s')
+  // Useful for custom blocks
+  if (isset($view->title)){
+    $view->build_info['title'] = $view->title;
   }
 }

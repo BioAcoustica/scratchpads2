@@ -8,7 +8,7 @@
  * @param array $data
  */
 function scratchpads_block_view_alter(&$data, $block){
-  if(isset($data['content']) && $block->module == 'views'){
+  if(isset($data['content']) && ($block->module == 'views' || $block->region == 'content')){
     // Move the view classes to the block classes
     if(preg_match('/(grid-[0-9])/', $data['content']['#markup'], $matches)){
       if(count($matches)){
@@ -26,6 +26,9 @@ function scratchpads_block_view_alter(&$data, $block){
         }
         $data['class'] = $classes;
       }
+    }
+    else {
+      $data['class'] = array('gridless');
     }
   }
 }
@@ -305,24 +308,24 @@ function scratchpads_biblio_tabular($variables){
         }
       }
       $data = biblio_format_authors($authors);
-    }elseif(empty($node->$row['name']) || $row['name'] == 'biblio_coins'){
+    }elseif(empty($node->{$row['name']}) || $row['name'] == 'biblio_coins'){
       continue;
     }else{
       switch($row['name']){
         case 'biblio_keywords':
-          $data = _biblio_keyword_links($node->$row['name'], $base);
+          $data = _biblio_keyword_links($node->{$row['name']}, $base);
           break;
         case 'biblio_url':
-          $data = l($node->$row['name'], $node->$row['name'], $attrib);
+          $data = l($node->{$row['name']}, $node->{$row['name']}, $attrib);
           break;
         case 'biblio_doi':
           $data = $doi;
           break;
         default:
           if($row['type'] == 'text_format'){
-            $data = check_markup($node->$row['name'], $node->biblio_formats[$row['name']]);
+            $data = check_markup($node->{$row['name']}, $node->biblio_formats[$row['name']]);
           }else{
-            $data = check_plain($node->$row['name']);
+            $data = check_plain($node->{$row['name']});
           }
       }
     }

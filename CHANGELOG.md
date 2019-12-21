@@ -1,3 +1,113 @@
+2.9.11 (2019-10-22)
+
+Among other issues, this release makes further improvements to the maps module
+including fixes for previous regressions, and imrpoves docker support.
+
+- Maps:
+    - Pan/zoom map to include regions on load (#5992 - @PaulKiddle)
+    - Fix error with region lookup (b74f709 - @alycejenni)
+    - Importer failing on geo fields (#5995 - @PaulKiddle)
+    - Fix regions not displaying (#6003 - @paulkiddle)
+    - Enable region selection of French Guiana (#5954 - @paulkiddle)
+- Docker:
+    - Add variable to set varnish memory usage (5ad67b6, 88263ae - @benscott)
+    - Disable issues block by default (1c122a1 - @benscott)
+    - Add variables to configure issues block (#6010 - @benscott)
+    - Varnish: Stream media files (#6030 - @benscott)
+- Hide `[bib]` tags on glossary page (#5997 - @alycejenni)
+- Trigger Solr to reindex authors on merge (#6024 - @benscott)
+- Fix batch user deletion (#5973 - @benscott)
+- Allow use of ampersands and HTML in node titles (#5982 - @paulkiddle)
+
+
+2.9.10 (2019-08-12)
+
+This release fixes a number of regressions and bugs, including significant work refactoring map fields to be more reliable.
+
+ - Retain inputted map data when trying to submit an incomplete or invalid form (#5852 - @PaulKiddle)
+ - Fix for BHL results not showing in taxonomy pages (#5944 - @jrdh)
+ - Prevent block headers covering other blocks in species overview pages (#5967 - @PaulKiddle)
+ - Prevent footer covering page content when too large (#5965 - @PaulKiddle)
+ - Allow popups on taxon maps for points with multiple sets of data (#5912 - @PaulKiddle)
+ - Allow file uploads that contain UTF8 characters in the filenames (#5972 - @PaulKiddle)
+ - Add scale bar to maps (#5986 - @PaulKiddle)
+ - Fix problems with taxonomy spreadsheet import (#5981 - @PaulKiddle)
+
+2.9.9 (2019-07-01)
+
+- Make BHL and ReFindIt API uses more reliable (#5944 - @jrdh)
+- Allow configuration of species tabs (#5947 - @jrdh)
+- Apply toggle setting on page load (#5888 - @jrdh)
+
+2.9.8 (2019-06-02)
+
+- Upgrade to Drupal 7.67
+
+2.9.7 (2019-04-16)
+
+- Fixed overlapping borders in tables (#5863 - @alycejenni)
+- Search submits after clicking an autocomplete suggestion (#5869 - @alycejenni)
+- Stopped the upload button jumping around (#5871 - @alycejenni)
+- Fixed image display issues on species pages slideshows (#5873 - @alycejenni)
+- Allow blocks to be added to main content (#5876 - @benscott)
+- "Other" added to gender options in biographies (#5879 - @alycejenni)
+- Hide Auto label from Admin>Structure (#5880 - @alycejenni)
+- View recently opened/closed issues from sidebar (#5887 - @alycejenni)
+- Italics tags allowed in biblio titles again (#5898 - @alycejenni)
+- Display terms in a fallback language if not defined in current language (#5905 - @alycejenni)
+- Autotag's "fields to populate" drop-down items (#5906 - @alycejenni)
+- Fixed AJAX error in contact form when Antibot enabled (#5907 - @alycejenni)
+- Fixed CSS issues with custom non-view blocks (#5909 - @alycejenni)
+- Titles for custom blocks now display (#5910 - @alycejenni)
+- Crossbrowser maps fix (#5904 - @benscott)
+
+2.9.6 (2019-02-26)
+
+Replaces Google-based map interfaces and fixes many bugs, including:
+
+- Replace Google-based maps (gm3 module) (@PaulKiddle)
+- Character handling in Literature (#5831, #5803) (@benscott)
+- Greek letters (#5769) (@benscott)
+- Large file uploads (#5763) (@benscott)
+- Performance issues (#5743) (@benscott)
+- Private groups context indexing (#5699) (@benscott)
+- Spam user registration (#5687) (@benscott)
+- Scratchpads classification service (#5674) (@benscott)
+- Taxonomy tree widget (#5657) (@benscott)
+- Docker SOLR replace image (@benscott)
+- EOL services access #5688 (@benscott)
+- Scratchpad sandbox offline (#5824) (@benscott)
+- Scratchpads.eu stats (#5689) (@benscott)
+- PHP 7.1 Docker (#5808) (@benscott)
+
+2.9.5 (2019-01-30)
+
+This is a small update that includes a security fix for Drupal core
+and also fixes a bug we missed in the PHP 7 work.
+
+- Upgrade to Drupal 7.63 (#5773) (@PaulKiddle)
+- Update views_slideshow module (#5792) (@PaulKiddle)
+
+
+2.9.4 (2019-01-14)
+
+- Upgrade to PHP 7 (#5671) (@PaulKiddle)
+- Upgrade to Drupal 7.61 (#5707) (@jrdh)
+- Replace Simon with Scratchpads Team in DwC-A metadata (#5712) (@jrdh)
+- Strip HTML tags from page titles (#5734) (@jrdh)
+- Allow TIF files to be uploaded (#5758) (@jrdh)
+- Rotate docker logs (#5761) (@jrdh)
+- Fix AJAX responses when using the wavesurfer module (#5764) (@jrdh)
+- Wrap biblio URLs to improve presentation (#5765) (@PaulKiddle)
+
+2.9.3 (2018-10-22)
+
+- Upgraded Drupal to 7.60
+- Fixed GBIF map tiles
+- Allow configuration of upload file size in Docker
+- Simplify docker filesystem
+- Update bio.acousti.ca modules
+
 2.9.2 (2018-10-03)
 
 - Upgraded Drupal to 7.59
@@ -13,7 +123,7 @@
 
 2.8.0.11 (2016-06-01)
 
-- Upgrades to some of the easier ocntrib modules to check.
+- Upgrades to some of the easier contrib modules to check.
 
 2.8.0.10 (2016-06-01)
 
